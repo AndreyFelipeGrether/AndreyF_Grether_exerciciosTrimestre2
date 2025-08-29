@@ -1,0 +1,390 @@
+Documentação de APIs
+
+1. Cat Facts API
+URL: https://catfact.ninja/fact
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados: Nenhum
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "fact": "Cats have five toes on their front paws, but only four toes on their back paws.",
+  "length": 69
+}
+
+Observações:
+
+
+Tempo de resposta: ~200ms
+
+
+Resposta bem formatada em JSON.
+
+
+Não requer autenticação.
+
+
+
+2. JokeAPI
+URL: https://v2.jokeapi.dev/joke/Programming
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados:
+
+
+type: single (Retorna apenas uma piada)
+
+
+lang: en (Idioma)
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "joke": "Why do programmers prefer dark mode? Because the light attracts bugs!",
+  "lang": "en",
+  "category": "Programming",
+  "type": "single"
+}
+
+Observações:
+
+
+Tempo de resposta: ~150ms
+
+
+Resposta simples com uma piada.
+
+
+
+3. OpenWeatherMap
+URL: https://api.openweathermap.org/data/2.5/weather
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados:
+
+
+q: London
+
+
+appid: YOUR_API_KEY (substitua com sua chave da API)
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "coord": {
+    "lon": -0.1257,
+    "lat": 51.5074
+  },
+  "weather": [
+    {
+      "id": 801,
+      "main": "Clouds",
+      "description": "few clouds",
+      "icon": "02d"
+    }
+  ],
+  "main": {
+    "temp": 289.92,
+    "pressure": 1015,
+    "humidity": 81
+  },
+  "name": "London",
+  "cod": 200
+}
+
+Observações:
+
+
+Tempo de resposta: ~300ms
+
+
+Exige uma chave de API para autenticação.
+
+
+
+4. NASA Mars Rover Photos
+URL: https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados:
+
+
+sol: 1000 (dia em Marte)
+
+
+camera: FHAZ
+
+
+api_key: YOUR_API_KEY
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "photos": [
+    {
+      "id": 1000,
+      "sol": 1000,
+      "camera": {
+        "id": 1,
+        "name": "FHAZ",
+        "rover_id": 1
+      },
+      "img_src": "http://mars.nasa.gov/system/news_items/main_images/1000_mars_rover.jpg"
+    }
+  ]
+}
+
+Observações:
+
+
+Tempo de resposta: ~500ms
+
+
+Exige chave de API.
+
+
+Retorna uma foto de Marte.
+
+
+5. Dog CEO's Dog API
+URL: https://dog.ceo/api/breeds/image/random
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados: Nenhum
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "message": "https://images.dog.ceo/breeds/akita/n02106382_3871.jpg",
+  "status": "success"
+}
+
+Observações:
+
+
+Tempo de resposta: ~100ms
+
+
+Resposta contém a URL de uma imagem aleatória de cachorro.
+
+
+
+6. Numbers API
+URL: http://numbersapi.com/42
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados: Nenhum
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "text": "42 is the answer to the ultimate question of life, the universe and everything.",
+  "number": 42,
+  "found": true,
+  "type": "trivia"
+}
+
+Observações:
+
+
+Tempo de resposta: ~150ms
+
+
+Resposta retorna uma curiosidade sobre o número.
+
+
+
+7. Rest Countries
+URL: https://restcountries.com/v3.1/all
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados: Nenhum
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+[
+  {
+    "name": {
+      "common": "Afghanistan",
+      "official": "Islamic Republic of Afghanistan"
+    },
+    "capital": "Kabul",
+    "region": "Asia",
+    "subregion": "Southern Asia"
+  }
+]
+
+Observações:
+
+
+Tempo de resposta: ~250ms
+
+
+Retorna a lista de países com informações detalhadas.
+
+
+
+8. COVID-19 Data
+URL: https://api.covid19api.com/summary
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados: Nenhum
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "Global": {
+    "NewConfirmed": 400000,
+    "TotalConfirmed": 500000000,
+    "NewDeaths": 5000,
+    "TotalDeaths": 10000000
+  },
+  "Countries": [
+    {
+      "Country": "Brazil",
+      "TotalConfirmed": 30000000
+    }
+  ]
+}
+
+Observações:
+
+
+Tempo de resposta: ~400ms
+
+
+Dados globais e por países sobre COVID-19.
+
+
+
+9. IP Geolocation
+URL: https://ipinfo.io
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados: Nenhum (ou usar token para autenticação)
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+{
+  "ip": "8.8.8.8",
+  "city": "Mountain View",
+  "region": "California",
+  "country": "US"
+}
+
+Observações:
+
+
+Tempo de resposta: ~150ms
+
+
+Retorna informações de geolocalização de um IP.
+
+
+
+10. The Cat API
+URL: https://api.thecatapi.com/v1/images/search
+
+
+Método HTTP: GET
+
+
+Parâmetros enviados: Nenhum
+
+
+Código de status da resposta: 200 OK
+
+
+Body da resposta:
+
+
+[
+  {
+    "id": "abc123",
+    "url": "https://cdn2.thecatapi.com/images/abc123.jpg",
+    "width": 500,
+    "height": 500
+  }
+]
+
+Observações:
+
+
+Tempo de resposta: ~100ms
+
+
+Retorna uma imagem aleatória de gato.
+
