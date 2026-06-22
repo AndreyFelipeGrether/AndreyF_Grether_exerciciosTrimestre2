@@ -6,7 +6,9 @@ CREATE TABLE TB_USUARIO (
         CONSTRAINT UN_USUARIO_EMAIL UNIQUE,
     ds_senha VARCHAR(50) NOT NULL,
     tp_perfil CHAR(1) NOT NULL
-        CONSTRAINT CK_USUARIO_PERFIL CHECK (tp_perfil IN ('P', 'C'))
+        CONSTRAINT CK_USUARIO_PERFIL CHECK (tp_perfil IN ('P', 'C')),
+    st_modo_idoso CHAR(1) NOT NULL
+        CONSTRAINT CK_USUARIO_MODO_IDOSO CHECK (st_modo_idoso IN ('S', 'N'))
 );
 
 CREATE TABLE TB_CLIENTE (
