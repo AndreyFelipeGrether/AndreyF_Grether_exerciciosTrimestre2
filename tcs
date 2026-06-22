@@ -188,9 +188,10 @@ CREATE TABLE TB_PEDIDO (
     id_cliente INT NOT NULL,
     id_produtor INT NOT NULL,
     dt_pedido DATE NOT NULL,
-    vl_total DECIMAL(6,2) NOT NULL
-        CONSTRAINT CK_PEDIDO_TOTAL CHECK (vl_total IN ('+', '-')),
-    st_pedido CHAR(1) NOT NULL,
+    vl_total DECIMAL(10,2) NOT NULL
+        CONSTRAINT CK_PEDIDO_TOTAL CHECK (vl_total >= 0),
+    st_pedido CHAR(1) NOT NULL
+        CONSTRAINT CK_PEDIDO_STATUS CHECK (st_pedido IN ('P', 'C', 'F', 'X')),
 
     CONSTRAINT FK_PEDIDO_CLIENTE FOREIGN KEY (id_cliente)
         REFERENCES TB_CLIENTE (id_cliente),
@@ -211,7 +212,7 @@ CREATE TABLE TB_REGISTRO_VENDA (
         CONSTRAINT CK_REGISTRO_VL_TOTAL CHECK (vl_total >= 0),
     dt_venda DATE NOT NULL,
     forma_pagamento VARCHAR (30) NULL,
-    observacao NULL
+    observacao TEXT NULL
     
 );
 
@@ -220,7 +221,12 @@ CREATE TABLE TB_A_ITEM_PEDIDO (
     id_pedido INT,
     id_produto INT,
     id_registro_venda INT,
-    qt_item INT NOT NULL,
+    qt_item INT NOT NULL
+        CONSTRAINT CK_ITEM_PEDIDO_QUANTIDADE CHECK (qt_item >= 0),
+    vl_unitario INT NOT NULL
+         CONSTRAINT CK_ITEM_VALOR_UNITARIO CHECK (vl_unitario >= 0),
+    vl_total INT NOT NULL
+         CONSTRAINT CK_ITEM_VALOR_TOTAL CHECK (vl_total >= 0),
 
     CONSTRAINT PK_ITEM_PEDIDO PRIMARY KEY (id_item_pedido, id_pedido, id_produto),
     CONSTRAINT PF_PEDIDO_A_ITEM_PEDIDO FOREIGN KEY (id_pedido)
@@ -231,4 +237,24 @@ CREATE TABLE TB_A_ITEM_PEDIDO (
         REFERENCES TB_REGISTRO_VENDA (id_registro_venda)
 );
 
+CREATE TABLE TB_PRODUTO_VENDA (
+    id_produto_venda INT IDENTITY (1,1)
+        CONSTRAINT PK_REGISTRO_VENDA PRIMARY KEY,
+    id_produtor INT NOT NULL,
+    id_produto INT NOT NULL,
+    ds_produto TEXT NULL,
+    qt_disponivel INT NOT NULL
+        CONSTRAINT CK_PRODUTO_VENDA_QUANTIDADE CHECK (qt_disponivel >= 0),
+    vl_venda DECIMAL (10,2)
+        CONSTRAINT CK_PRODUTO_VL_VENDA CHECK (vl_venda >= 0)
+    st_ativo CHAR (1) NOT NULL DEFAULT 'A'
+        CONSTRAINT CK_PRODUTO_VENDA_ST_ATIVO CHECK (st_ativo IN ('A', 'I'))
+    dt_cadastro DATE NOT NULL
+        CONSTRAINT DF_PRODUTO_VENDA_DT_CADASTRO DEFAULT GETDATE,
+
+     CONSTRAINT FK_PRODUTO_VENDA_PRODUTOR FOREIGN KEY (id_produtor)
+        REFERENCES TB_PRODUTOR (id_produtor),
+    CONSTRAINT PF_PRODUTO_VENDA_PRODUTO FOREIGN KEY (id_produto)
+        REFERENCES TB_PRODUTO (id_produto)   
+);
   
