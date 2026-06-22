@@ -113,10 +113,8 @@ CREATE TABLE TB_A_PRODUTOR_PRODUTO (
     id_produtor_produto INT IDENTITY (1,1),
     id_produtor INT NOT NULL,
     id_produto INT NOT NULL,
-    qt_produto INT NOT NULL
+    qt_estoque INT NOT NULL
         CONSTRAINT CK_PRODUTOR_PRODUTO_QUANTIDADE CHECK (qt_produto IN ('+', '-')),
-    vl_produto DECIMAL(6,2) NOT NULL
-        CONSTRAINT CK_PRODUTOR_PRODUTO_VALOR CHECK (vl_produto IN ('+', '-')),
 
     CONSTRAINT PK_PRODUTOR_PRODUTO PRIMARY KEY (id_produtor_produto, id_produtor, id_produto),
     CONSTRAINT PF_PRODUTOR_A_PRODUTO_PRODUTOR FOREIGN KEY (id_produtor)
@@ -129,12 +127,17 @@ CREATE TABLE TB_FATURAMENTO (
     id_faturamento INT IDENTITY (1,1)
         CONSTRAINT PK_ID_FATURAMENTO PRIMARY KEY,
     id_produtor_produto INT NOT NULL,
-    vl_recebido DECIMAL(7,2) NOT NULL
-        CONSTRAINT CK_FATURAMENTO_RECEBIDO CHECK (vl_recebido IN ('+', '-')),
+    id_registro_venda INT NOT NULL,
+    vl_recebido DECIMAL(10,2) NOT NULL
+        CONSTRAINT CK_FATURAMENTO_RECEBIDO CHECK (vl_recebido >= 0),
     dt_faturamento DATE NOT NULL,
+    forma_pagamento VARCHAR (30) NULL,
+    observacao TEXT NULL,
 
     CONSTRAINT FK_FATURAMENTO_PRODUTOR_PRODUTO FOREIGN KEY (id_produtor_produto)
-        REFERENCES TB_A_PRODUTOR_PRODUTO (id_produtor_produto)
+        REFERENCES TB_A_PRODUTOR_PRODUTO (id_produtor_produto),
+    CONSTRAINT FK_FATURAMENTO_PRODUTOR_REGISTRO_VENDA FOREIGN KEY (id_registro_venda)
+        REFERENCES TB_REGISTRO_VENDA (id_registro_venda)
 );
 
 CREATE TABLE TB_PLANO(
@@ -165,6 +168,20 @@ CREATE TABLE TB_ASSINATURA (
         REFERENCES TB_PLANO (id_plano)
 );
 
+CREATE TABLE TB_ALERTA (
+    id_alerta INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_ALERTA PRIMARY KEY,
+    id_produtor INT NOT NULL,
+    ds_alerta VARCHAR (150) NOT NULL,
+    dt_alerta DATE NOT NULL
+        CONSTRAINT DF_ALERTA_DATA DEFAULT 'N/I',
+    st_lido CHAR(1) NOT NULL DEFAULT 'N'
+        CONSTRAINT CK_ALERTA_LIDO CHECK (st_lido IN ('S', 'N')),
+
+    CONSTRAINT FK_ALERTA_PRODUTOR FOREIGN KEY (id_produtor)
+        REFERENCES TB_PRODUTOR (id_produtor)
+);
+
 CREATE TABLE TB_PEDIDO (
     id_pedido INT IDENTITY (1,1)
         CONSTRAINT PK_ID_PEDIDO PRIMARY KEY,
@@ -183,7 +200,19 @@ CREATE TABLE TB_PEDIDO (
 
 CREATE TABLE TB_REGISTRO_VENDA (
     id_registro_venda INT IDENTITY (1,1)
-        CONSTRAINT PK_REGISTRO_VENDA PRIMARY KEY
+        CONSTRAINT PK_REGISTRO_VENDA PRIMARY KEY,
+    id_produtor INT NOT NULL,
+    id_produto INT NOT NULL,
+    qt_vendida INT NOT NULL
+        CONSTRAINT CK_REGISTRO_QT_VENDIDA CHECK (qt_vendida > 0),
+    vl_unitario DECIMAL (10,2)
+        CONSTRAINT CK_REGISTRO_VL_UNITARIO CHECK (vl_unitario >= 0),
+    vl_total DECIMAL (10,2)
+        CONSTRAINT CK_REGISTRO_VL_TOTAL CHECK (vl_total >= 0),
+    dt_venda DATE NOT NULL,
+    forma_pagamento VARCHAR (30) NULL,
+    observacao NULL
+    
 );
 
 CREATE TABLE TB_A_ITEM_PEDIDO (
