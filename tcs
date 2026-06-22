@@ -80,23 +80,33 @@ CREATE TABLE TB_PROPRIEDADE (
     CONSTRAINT FK_PROPRIEDADE_PRODUTOR FOREIGN KEY (id_produtor)
         REFERENCES TB_PRODUTOR (id_produtor),
     CONSTRAINT FK_PROPRIEDADE_LOCALIZACAO FOREIGN KEY (id_localizacao_propriedade)
-        REFERENCES TB_ENDERECO (id_localizacao_propriedade)
+        REFERENCES TB_LOCALIZACAO_PROPRIEDADE (id_localizacao_propriedade)
 
+);
+
+CREATE TABLE TB_CATEGORIA_DESPESA (
+    id_categoria_despesa INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_CATEGORIA_DESPESA PRIMARY KEY,
+    nm_categoria_despesa VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE TB_DESPESA (
     id_despesa INT IDENTITY (1,1)
         CONSTRAINT PK_ID_DESPESA PRIMARY KEY,
     id_produtor INT NOT NULL,
+    id_categoria_despesa INT NOT NULL,
     ds_despesa TEXT 
         CONSTRAINT DF_DESPESA_DESCRICAO DEFAULT 'N/I',
-    vl_despesa DECIMAL(7,2) NOT NULL
+    vl_despesa DECIMAL(10,2) NOT NULL
         CONSTRAINT CK_DESPESA_VALOR CHECK (vl_despesa IN ('+', '-')),
     dt_despesa DATE NOT NULL,
-    ct_despesa VARCHAR (20) NOT NULL,
+    st_pagamneto CHAR (1) NOT NULL DEFAULT 'P'
+        CONSTRAINT CK_DESPESA_PAGAMENTO CHECK (st_pagamento IN('P', 'Q')),
 
     CONSTRAINT FK_DESPESA_PRODUTOR FOREIGN KEY (id_produtor)
-        REFERENCES TB_PRODUTOR (id_produtor)
+        REFERENCES TB_PRODUTOR (id_produtor),
+    CONSTRAINT FK_DESPESA_CATEGORIA FOREIGN KEY (id_categoria_despesa)
+        REFERENCES TB_CATEGORIA_DESPESA (id_categoria_despesa)
 );
 
 CREATE TABLE TB_A_PRODUTOR_PRODUTO (
