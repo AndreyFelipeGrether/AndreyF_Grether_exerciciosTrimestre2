@@ -1,0 +1,193 @@
+CREATE TABLE TB_USUARIO (
+    id_usuario INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_USUARIO PRIMARY KEY,
+    nm_usuario VARCHAR(25) NOT NULL,
+    ds_email VARCHAR(80) NOT NULL
+        CONSTRAINT UN_USUARIO_EMAIL UNIQUE,
+    ds_senha VARCHAR(50) NOT NULL,
+    tp_perfil CHAR(1) NOT NULL
+        CONSTRAINT CK_USUARIO_PERFIL CHECK (tp_perfil IN ('P', 'C'))
+);
+
+CREATE TABLE TB_CLIENTE (
+    id_cliente INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_CLIENTE PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    dt_nascimento DATE NOT NULL,
+    st_verificado CHAR(1) NOT NULL
+        CONSTRAINT CK_CLIENTE_VERIFICADO CHECK (st_verificado IN ('A', 'I')),
+
+    CONSTRAINT FK_CLIENTE_USUARIO FOREIGN KEY (id_usuario)
+        REFERENCES TB_USUARIO (id_usuario)
+);
+
+CREATE TABLE TB_PRODUTOR (
+    id_produtor INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_PRODUTOR PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    nr_cpf CHAR(11) NOT NULL
+        CONSTRAINT UN_PRODUTOR_CPF UNIQUE,
+    nr_telefone CHAR(10)
+        CONSTRAINT DF_PRODUTOR_TELEFONE DEFAULT 'S/N',
+
+    CONSTRAINT FK_PRODUTOR_USUARIO FOREIGN KEY (id_usuario)
+        REFERENCES TB_USUARIO (id_usuario)
+   
+);
+
+CREATE TABLE TB_CATEGORIA (
+    id_categoria INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_CATEGORIA PRIMARY KEY,
+    nm_categoria VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE TB_PRODUTO (
+    id_produto INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_PRODUTOR PRIMARY KEY,
+    id_categoria INT NOT NULL,
+    nm_produto VARCHAR(50) NOT NULL,
+
+    CONSTRAINT FK_PRODUTO_CATEGORIA FOREIGN KEY (id_categoria)
+        REFERENCES TB_CATEGORIA (id_categoria)
+);
+
+CREATE TABLE TB_LOCALIZACAO_PROPRIEDADE (
+    id_localizacao_propriedade INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_ENDERECO PRIMARY KEY,
+    nm_cidade VARCHAR(35) NOT NULL,
+    nm_bairro VARCHAR(65) NOT NULL,
+    nm_rua VARCHAR(45) NOT NULL,
+    nr_casa INT NOT NULL
+        CONSTRAINT DF_PROPRIEDADE_CASA DEFAULT 'S/N',
+    nr_longitude DECIMAL(10,8) NOT NULL
+        CONSTRAINT CK_PROPRIEDADE_LONGITUDE CHECK (nr_longitude IN ('+', '-'),
+    nr_latitude DECIMAL(10,8) NOT NULL
+        CONSTRAINT CK_PROPRIEDADE_LATITUDE CHECK (nr_latitude IN ('+', '-')
+);
+
+CREATE TABLE TB_PROPRIEDADE (
+    id_propriedade INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_PROPRIEDADE PRIMARY KEY,
+    id_produtor INT NOT NULL,
+    id_localizacao_propriedade INT NOT NULL,
+    nm_propriedade VARCHAR(50) NOT NULL
+        CONSTRAINT UN_PROPRIEDADE_NOME UNIQUE,
+    tm_propriedade DECIMAL (7,2)
+    tipo_local_venda VARCHAR(80),
+
+    CONSTRAINT FK_PROPRIEDADE_PRODUTOR FOREIGN KEY (id_produtor)
+        REFERENCES TB_PRODUTOR (id_produtor),
+    CONSTRAINT FK_PROPRIEDADE_LOCALIZACAO FOREIGN KEY (id_localizacao_propriedade)
+        REFERENCES TB_ENDERECO (id_localizacao_propriedade)
+
+);
+
+CREATE TABLE TB_DESPESA (
+    id_despesa INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_DESPESA PRIMARY KEY,
+    id_produtor INT NOT NULL,
+    ds_despesa TEXT 
+        CONSTRAINT DF_DESPESA_DESCRICAO DEFAULT 'N/I',
+    vl_despesa DECIMAL(7,2) NOT NULL
+        CONSTRAINT CK_DESPESA_VALOR CHECK (vl_despesa IN ('+', '-')),
+    dt_despesa DATE NOT NULL,
+    ct_despesa VARCHAR (20) NOT NULL,
+
+    CONSTRAINT FK_DESPESA_PRODUTOR FOREIGN KEY (id_produtor)
+        REFERENCES TB_PRODUTOR (id_produtor)
+);
+
+CREATE TABLE TB_A_PRODUTOR_PRODUTO (
+    id_produtor_produto INT IDENTITY (1,1),
+    id_produtor INT NOT NULL,
+    id_produto INT NOT NULL,
+    qt_produto INT NOT NULL
+        CONSTRAINT CK_PRODUTOR_PRODUTO_QUANTIDADE CHECK (qt_produto IN ('+', '-')),
+    vl_produto DECIMAL(6,2) NOT NULL
+        CONSTRAINT CK_PRODUTOR_PRODUTO_VALOR CHECK (vl_produto IN ('+', '-')),
+
+    CONSTRAINT PK_PRODUTOR_PRODUTO PRIMARY KEY (id_produtor_produto, id_produtor, id_produto),
+    CONSTRAINT PF_PRODUTOR_A_PRODUTO_PRODUTOR FOREIGN KEY (id_produtor)
+        REFERENCES TB_PRODUTOR (id_produtor),
+    CONSTRAINT PF_PRODUTO_A_PRODUTOR_PRODUTO FOREIGN KEY (id_produto)
+        REFERENCES TB_PRODUTO (id_produto)
+);
+
+CREATE TABLE TB_FATURAMENTO (
+    id_faturamento INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_FATURAMENTO PRIMARY KEY,
+    id_produtor_produto INT NOT NULL,
+    vl_recebido DECIMAL(7,2) NOT NULL
+        CONSTRAINT CK_FATURAMENTO_RECEBIDO CHECK (vl_recebido IN ('+', '-')),
+    dt_faturamento DATE NOT NULL,
+
+    CONSTRAINT FK_FATURAMENTO_PRODUTOR_PRODUTO FOREIGN KEY (id_produtor_produto)
+        REFERENCES TB_A_PRODUTOR_PRODUTO (id_produtor_produto)
+);
+
+CREATE TABLE TB_PLANO(
+    id_plano INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_PLANO PRIMARY KEY,
+    tp_plano CHAR(1) NOT NULL
+        CONSTRAINT CK_PLANO_TIPO CHECK (tp_plano IN ('P', 'G')),
+    vl_plano DECIMAL (6,2)
+        CONSTRAINT CK_PLANO_VALOR CHECK (vl_plano >= 0),
+    ds_plano TEXT,
+    st_ativo CHAR (1)
+        CONSTRAINT CK_PLANO_ATIVO CHECK (st_ativo IN ('A', 'I'))
+);
+
+CREATE TABLE TB_ASSINATURA (
+    id_assinatura INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_ASSINATURA PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_plano INT NOT NULL,
+    dt_inicio DATE NOT NULL,
+    dt_final DATE NOT NULL,
+    st_assinatura CHAR(1) NOT NULL
+        CONSTRAINT CK_ASSINATURA_STATUS CHECK (st_assinatura IN ('A', 'I')),
+
+    CONSTRAINT FK_ASSINATURA_USUARIO FOREIGN KEY (id_usuario)
+        REFERENCES TB_USUARIO (id_usuario),
+    CONSTRAINT FK_ASSINATURA_PLANO FOREIGN KEY (id_plano)
+        REFERENCES TB_PLANO (id_plano)
+);
+
+CREATE TABLE TB_PEDIDO (
+    id_pedido INT IDENTITY (1,1)
+        CONSTRAINT PK_ID_PEDIDO PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_produtor INT NOT NULL,
+    dt_pedido DATE NOT NULL,
+    vl_total DECIMAL(6,2) NOT NULL
+        CONSTRAINT CK_PEDIDO_TOTAL CHECK (vl_total IN ('+', '-')),
+    st_pedido CHAR(1) NOT NULL,
+
+    CONSTRAINT FK_PEDIDO_CLIENTE FOREIGN KEY (id_cliente)
+        REFERENCES TB_CLIENTE (id_cliente),
+    CONSTRAINT FK_PEDIDO_PRODUTOR FOREIGN KEY (id_produtor)
+        REFERENCES TB_PRODUTOR (id_produtor)
+);
+
+CREATE TABLE TB_REGISTRO_VENDA (
+    id_registro_venda INT IDENTITY (1,1)
+        CONSTRAINT PK_REGISTRO_VENDA PRIMARY KEY
+);
+
+CREATE TABLE TB_A_ITEM_PEDIDO (
+    id_item_pedido INT IDENTITY (1,1),
+    id_pedido INT,
+    id_produto INT,
+    id_registro_venda INT,
+    qt_item INT NOT NULL,
+
+    CONSTRAINT PK_ITEM_PEDIDO PRIMARY KEY (id_item_pedido, id_pedido, id_produto),
+    CONSTRAINT PF_PEDIDO_A_ITEM_PEDIDO FOREIGN KEY (id_pedido)
+        REFERENCES TB_PEDIDO (id_pedido),
+    CONSTRAINT PF_ITEM_PEDIDO_PRODUTO FOREIGN KEY (id_produto)
+        REFERENCES TB_PRODUTO (id_produto)
+    CONSTRAINT FK_ITEM_PEDIDO_REGISTRO FOREIGN KEY (id_registro_venda)
+        REFERENCES TB_REGISTRO_VENDA (id_registro_venda)
+);
+
+  
